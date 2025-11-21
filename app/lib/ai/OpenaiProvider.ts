@@ -8,7 +8,7 @@ export class OpenaiProvider implements AiModelProvider {
     this.apiKey = apiKey;
   }
 
-  async generatePersona(topic: string): Promise<string> {
+  async generatePersona(topic: string,inst:string): Promise<string> {
     const prompt = `
 You are an expert business analyst with browsing enabled.
 
@@ -19,6 +19,7 @@ Before generating the persona, you MUST follow this strict order:
 2. ONLY IF relevant info about the target company is NOT found here, you may use your internal model knowledge.  
 3. Prefer press releases, official announcements, financial results, and news articles.  
 4. If specific data is not available, state: “Not publicly available” + a reasonable estimation.
+5.Also take into account these additional instructions provided by the user: ${inst}
 
 The target company is: **${topic}**
 

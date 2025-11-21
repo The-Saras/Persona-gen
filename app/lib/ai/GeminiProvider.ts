@@ -9,7 +9,7 @@ export class GeminiProvider implements AiModelProvider {
     this.model = client.getGenerativeModel({ model: "gemini-2.0-flash" });
   }
 
-  async generatePersona(topic: string): Promise<string> {
+  async generatePersona(topic: string,inst:string): Promise<string> {
     const URL_LIST = `
 Approved URLs:
 
@@ -120,6 +120,8 @@ You are an expert business analyst. Before answering, follow these strict rules:
 ${SEARCH_URLS}
 
 Now generate a detailed and structured company persona.
+
+Also take into account these additional instructions provided by the user: ${inst}
 
 Company: ${topic}
 
