@@ -1,4 +1,9 @@
- export var prompt = `
+"use client";
+
+import { useState } from "react";
+
+export default function PersonaPage() {
+  const [prompt, setPrompt] = useState(`
 You are an expert business analyst with browsing enabled.
 
 Before generating the persona, you MUST follow this strict order:
@@ -117,4 +122,63 @@ Follow EXACTLY this structure:
 9. **Scoring Breakdown (0–100)**
 
 Format using clean text.
-`;
+`);
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const generatePersona = async () => {
+    setLoading(true);
+    setResponse("");
+
+    try {
+      const res = await fetch("/api/persona", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setResponse("❌ " + data.error);
+      } else {
+        setResponse(data.data);
+      }
+    } catch (err) {
+      setResponse("❌ Failed to generate persona");
+    }
+
+    setLoading(false);
+  };
+
+  return (
+     <div className="min-h-screen bg-slate-900 text-white p-10">
+
+      {/* HEADER + BUTTON ROW */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Persona Generator</h1>
+
+        <button
+          onClick={generatePersona}
+          disabled={loading}
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold disabled:opacity-50"
+        >
+          {loading ? "Generating..." : "Generate"}
+        </button>
+      </div>
+
+      {/* TEXTAREA */}
+      <textarea
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Write your prompt here..."
+        className="w-full h-40 p-4 rounded-xl bg-slate-800 border border-slate-700 outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      {/* RESPONSE WINDOW */}
+      <div className="mt-6 p-4 bg-slate-800 border border-slate-700 rounded-xl min-h-[200px] whitespace-pre-wrap">
+        {response || "Response will appear here..."}
+      </div>
+    </div>
+  );
+}

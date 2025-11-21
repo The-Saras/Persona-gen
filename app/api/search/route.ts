@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { topic,model,inst } = await req.json();
+    const { topic,model,inst,promptTemplate } = await req.json();
 
     if (!topic) {
       return NextResponse.json(
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     var provider = model;
     const ai = AiFactory.create(provider);
-    const data = await ai.generatePersona(topic,inst);
+    const data = await ai.generatePersona(topic,inst,promptTemplate);
 
     return NextResponse.json({ data });
   } catch (error) {
